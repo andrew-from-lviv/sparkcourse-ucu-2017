@@ -18,6 +18,9 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class DataFrameBuilder {
+    //Move to config
+
+
     @Autowired
     private JavaSparkContext sc;
 
@@ -44,15 +47,4 @@ public class DataFrameBuilder {
                 DataTypes.createStructField("account number", DataTypes.IntegerType, false)
         });
     }
-
-
-
-
-
-
-
-
-
-
-
 }
