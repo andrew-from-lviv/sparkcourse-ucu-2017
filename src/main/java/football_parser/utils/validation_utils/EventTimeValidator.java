@@ -18,8 +18,9 @@ public class EventTimeValidator implements DataFrameValidator, UDF1<String, Bool
    // private static final String TIME_PART = "Time";
     private static final String EVENT_TIME_VALID_COLUMN = "eventTimeIsValid";
     private static final String EVENT_TIME_COLUMN = "eventTime";
+
     @Autowired
-    UserConfig userConfig;
+    private UserConfig userConfig;
 
     @Override
     public DataFrame validateDF(DataFrame data) {

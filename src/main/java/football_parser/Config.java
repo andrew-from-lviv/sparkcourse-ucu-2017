@@ -11,6 +11,9 @@ import org.springframework.context.annotation.PropertySource;
 
 @Configuration
 @ComponentScan(basePackages = "football_parser.*")
+@PropertySource(value = "classpath:football_columns.properties")
+@PropertySource(value = "classpath:single_player_events.properties")
+@PropertySource(value = "classpath:double_players_events.properties")
 public class Config {
 
     @Autowired
