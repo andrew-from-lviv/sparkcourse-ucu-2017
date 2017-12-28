@@ -6,6 +6,8 @@ import lombok.SneakyThrows;
 import org.apache.spark.sql.DataFrame;
 import org.apache.spark.sql.api.java.UDF1;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.Collection;
@@ -14,17 +16,19 @@ import static football_parser.utils.Constants.*;
 import static org.apache.spark.sql.functions.col;
 import static org.apache.spark.sql.functions.callUDF;
 
+@Service
+@Configurable
 public class PlayerExistenceValidator implements DataFrameValidator, UDF1<String, Boolean> {
     @Autowired
     UserConfig userConfig;
 
     Collection<String> existingPlayers;
 
-//    @PostConstruct
-//    // Saving existingPlayers to avoid loading them each time
-//    private void init(){
-//        this.existingPlayers = userConfig.getAllPlayers();
-//    }
+    @PostConstruct
+    // Saving existingPlayers to avoid loading them each time
+    private void init(){
+        this.existingPlayers = userConfig.getAllPlayers();
+    }
 
     @Override
     public DataFrame validateDF(DataFrame data) {

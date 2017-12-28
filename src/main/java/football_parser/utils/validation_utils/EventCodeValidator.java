@@ -6,6 +6,8 @@ import org.apache.spark.sql.DataFrame;
 import org.apache.spark.sql.api.java.UDF1;
 import org.apache.spark.sql.api.java.UDF3;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.Arrays;
@@ -19,6 +21,9 @@ import static org.apache.spark.sql.functions.col;
  * Validates number of players for the event
  * User existence is NOT validated in this class - The separate validator should be used
  */
+
+@Service
+@Configurable
 public class EventCodeValidator implements DataFrameValidator, UDF3<String, String, String, Boolean> {
     @Autowired
     UserConfig userConfig;

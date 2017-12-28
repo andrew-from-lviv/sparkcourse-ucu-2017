@@ -5,6 +5,7 @@ import lombok.SneakyThrows;
 import org.apache.spark.sql.DataFrame;
 import org.apache.spark.sql.api.java.UDF1;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.stereotype.Service;
 
 
@@ -13,9 +14,9 @@ import static org.apache.spark.sql.functions.col;
 import static org.apache.spark.sql.functions.callUDF;
 
 @Service
+@Configurable
 public class EventTimeValidator implements DataFrameValidator, UDF1<String, Boolean> {
 
-   // private static final String TIME_PART = "Time";
     private static final String EVENT_TIME_VALID_COLUMN = "eventTimeIsValid";
     private static final String EVENT_TIME_COLUMN = "eventTime";
 
