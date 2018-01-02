@@ -5,6 +5,8 @@ import lombok.SneakyThrows;
 import org.apache.spark.sql.DataFrame;
 import org.apache.spark.sql.api.java.UDF1;
 import org.apache.spark.sql.api.java.UDF3;
+import org.apache.spark.sql.types.DataType;
+import org.apache.spark.sql.types.DataTypes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.stereotype.Service;
@@ -41,6 +43,11 @@ public class EventCodeValidator implements DataFrameValidator, UDF3<String, Stri
     @Override
     public DataFrame validateDF(DataFrame data) {
         return data.withColumn(EVENT_CODE_VALID_COLUMN, callUDF(this.getClass().getName(), col(EVENT_CODE_COLUMN), col(FROM_COLUMN), col(TO_COLUMN)));
+    }
+
+    @Override
+    public DataType getDataType() {
+        return DataTypes.BooleanType;
     }
 
     @Override

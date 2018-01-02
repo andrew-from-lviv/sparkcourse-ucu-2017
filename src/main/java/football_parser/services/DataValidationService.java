@@ -1,17 +1,14 @@
 package football_parser.services;
 
+import football_parser.annotations.ShowResultsOnConsole;
 import football_parser.utils.validation_utils.DataFrameValidator;
-import lombok.SneakyThrows;
 import org.apache.spark.sql.DataFrame;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.reflections.Reflections;
 
-import java.lang.reflect.*;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Set;
+
 import static org.apache.spark.sql.functions.col;
 
 @Service
@@ -21,25 +18,27 @@ public class DataValidationService {
     @Autowired
     private Collection<DataFrameValidator> validators;
 
+    @ShowResultsOnConsole
     public DataFrame validate(DataFrame frame){
-        DataFrame newFrame = frame.toDF();
+        DataFrame df = frame.toDF();
         for(DataFrameValidator validator: this.validators){
-            newFrame = validator.validateDF(newFrame);
+            df = validator.validateDF(df);
         }
 
-        return newFrame;
+        return df;
     }
 
-    public DataFrame removeInvalidRows(DataFrame df){
-        Collection<String> columns = Arrays.asList(df.columns());
-        DataFrame validated = null;
+    @ShowResultsOnConsole
+    public DataFrame removeInvalidRows(DataFrame dataFrame){
+        Collection<String> columns = Arrays.asList(dataFrame.columns());
+        DataFrame df = dataFrame.toDF();
         
         for(String column: columns){
             if(column.contains(VALIDATION_COLUMN_PATTERN)){
-                validated = df.filter(String.format("%s = true", column));
+                df = df.filter(String.format("%s = true", column)).drop(col(column));
             }
         }
 
-        return validated;
+        return df;
     }
 }

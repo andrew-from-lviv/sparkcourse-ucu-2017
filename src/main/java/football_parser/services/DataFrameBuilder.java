@@ -1,10 +1,10 @@
 package football_parser.services;
 
+import football_parser.annotations.ShowResultsOnConsole;
 import football_parser.configurations.UserConfig;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.sql.*;
-import org.apache.spark.sql.types.DataType;
 import org.apache.spark.sql.types.DataTypes;
 import org.apache.spark.sql.types.StructField;
 import org.apache.spark.sql.types.StructType;
@@ -31,7 +31,7 @@ public class DataFrameBuilder {
     @Autowired
     private UserConfig userConfig;
 
-
+    @ShowResultsOnConsole
     public DataFrame load() {
         String[] userDefinedColumns = userConfig.getColumnNames();
         JavaRDD<String> rdd = sc.textFile("data/football_parser/rawData.txt");
@@ -39,7 +39,9 @@ public class DataFrameBuilder {
                 .filter(line -> line != null && !line.isEmpty())
                 .map(line -> parseRow(line, userDefinedColumns));
 
-        return sqlContext.createDataFrame(rowJavaRDD, createStructType(userDefinedColumns));
+        DataFrame df = sqlContext.createDataFrame(rowJavaRDD, createStructType(userDefinedColumns));
+
+        return df;
     }
 
     private static Row parseRow(String row, String[] userDefinedColumns) {

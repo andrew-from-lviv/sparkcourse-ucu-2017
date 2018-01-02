@@ -1,4 +1,4 @@
-package football_parser.utils.validation_utils;
+package football_parser.utils.enrichment_utils;
 
 import football_parser.configurations.UserConfig;
 import lombok.SneakyThrows;
@@ -10,37 +10,32 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
+import java.util.Map;
 
 import static football_parser.utils.Constants.*;
-import static org.apache.spark.sql.functions.col;
 import static org.apache.spark.sql.functions.callUDF;
+import static org.apache.spark.sql.functions.col;
 
 @Service
 @Configurable
-public class EventTimeValidator implements DataFrameValidator, UDF1<String, Boolean> {
-
-
-
-    @Autowired
-    private UserConfig userConfig;
+public class TimeEnricher implements UDF1<String, Integer>, DataFrameEnricher  {
 
     @Override
-    public DataFrame validateDF(DataFrame data) {
-        return data.withColumn(EVENT_TIME_VALID_COLUMN, callUDF(this.getClass().getName(), col(EVENT_TIME_COLUMN)));
+    public DataFrame enrich(DataFrame df) {
+        return df.withColumn(TIME_COLUMN, callUDF(this.getClass().getName(), col(EVENT_TIME_COLUMN)));
     }
 
     @Override
     @SneakyThrows
-    public Boolean call(String s){
+    public Integer call(String s){
         String[] time = s.trim().split(TIME_DELIMITER);
         int minutes = Integer.parseInt(time[0]);
-        int seconds = Integer.parseInt(time[1]);
-
-        return (minutes > MAX_GAME_TIME || minutes < 0 || seconds < 0 || seconds > SECONDS_IN_MINUTE) ? false : true;
+        return minutes > FIRST_TIME_START && minutes < FIRST_TIME_END ? FIRST_TIME : (minutes > SECOND_TIME_START && minutes < SECOND_TIME_END ? SECOND_TIME : TIME_INVALID);
     }
 
     @Override
     public DataType getDataType() {
-        return DataTypes.BooleanType;
+        return DataTypes.IntegerType;
     }
 }

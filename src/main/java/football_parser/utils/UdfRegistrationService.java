@@ -1,6 +1,8 @@
 package football_parser.utils;
 
 import com.sun.org.apache.xpath.internal.operations.Bool;
+import football_parser.services.DataValidationService;
+import football_parser.utils.enrichment_utils.DataFrameEnricher;
 import football_parser.utils.validation_utils.DataFrameValidator;
 import lombok.SneakyThrows;
 import org.apache.spark.sql.SQLContext;
@@ -26,20 +28,30 @@ public class UdfRegistrationService {
     private SQLContext sqlContext;
 
     @Autowired
-    List<UDF1> udf1Functions;
+    List<DataFrameValidator> validators;
 
     @Autowired
-    List<UDF3> udf3Functions;
+    List<DataFrameEnricher> enrichers;
 
 
     @PostConstruct
     private void init(){
-        for(UDF1 udf: this.udf1Functions){
-            sqlContext.udf().register(udf.getClass().getName(), udf, DataTypes.BooleanType);
+        for(DataFrameValidator validator: this.validators){
+            if(validator instanceof UDF1){
+                sqlContext.udf().register(validator.getClass().getName(), (UDF1)validator, validator.getDataType());
+            }
+            else {
+                sqlContext.udf().register(validator.getClass().getName(), (UDF3)validator, validator.getDataType());
+            }
         }
 
-        for(UDF3 udf: this.udf3Functions){
-           sqlContext.udf().register(udf.getClass().getName(), udf, DataTypes.BooleanType);
+        for(DataFrameEnricher enricher: this.enrichers){
+            if(enricher instanceof UDF1){
+                sqlContext.udf().register(enricher.getClass().getName(), (UDF1)enricher, enricher.getDataType());
+            }
+            else {
+                sqlContext.udf().register(enricher.getClass().getName(), (UDF3)enricher, enricher.getDataType());
+            }
         }
     }
 

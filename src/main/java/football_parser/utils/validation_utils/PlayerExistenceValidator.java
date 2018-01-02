@@ -5,6 +5,8 @@ import football_parser.utils.Constants;
 import lombok.SneakyThrows;
 import org.apache.spark.sql.DataFrame;
 import org.apache.spark.sql.api.java.UDF1;
+import org.apache.spark.sql.types.DataType;
+import org.apache.spark.sql.types.DataTypes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.stereotype.Service;
@@ -44,5 +46,10 @@ public class PlayerExistenceValidator implements DataFrameValidator, UDF1<String
         }
 
         return false;
+    }
+
+    @Override
+    public DataType getDataType() {
+        return DataTypes.BooleanType;
     }
 }
